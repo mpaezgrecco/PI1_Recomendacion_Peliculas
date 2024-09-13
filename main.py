@@ -37,6 +37,9 @@ una palabra.'''
 tfidf = TfidfVectorizer(stop_words=stopwords_custom)
 tfidf_matrix = tfidf.fit_transform(data['title'])
 
+# Calcular la similitud del coseno entre los títulos de las películas
+cosine_similarities = linear_kernel(tfidf_matrix, tfidf_matrix)
+
 ''' 1. def cantidad_filmaciones_mes( Mes ): 
 Se ingresa un mes en idioma Español. Debe devolver la cantidad de películas que fueron estrenadas en el
 mes consultado en la totalidad del dataset.'''
@@ -169,93 +172,78 @@ mismo medido a través del retorno. Además, la cantidad de películas que en la
 promedio de retorno. La definición no deberá considerar directores.'''
 
 # Definir la función con el decorador
-@app.get("/get_actor/{nombre_actor}")
-def get_actor(nombre_actor: str):
-    # Filtrar las filas que contienen al actor consultado
-    peliculas_actor = data[data['names_actors'].apply(lambda x: nombre_actor in x)]
+@app.get("/get_actor/{nombre_del_actor}")
+def get_actor(nombre_del_actor: str):
     
-    # Verificar si el actor existe en el dataset
-    if peliculas_actor.empty:
-        return {"message": f"No se encontraron películas para el actor: {nombre_actor}"}
+    # Filtrar las filas donde se encuentra el actor que buscamos 
+    actor_film = data[data['names_actors'].apply(lambda x: nombre_del_actor in x)]
+    
+    # Verificar si el actor existe
+    if actor_film.empty:
+        return {"message": f"No se encontro relacion del actor con ninguna pelicula: {nombre_del_actor}"}
     
     # Obtener la cantidad de películas y el promedio de retorno del actor
-    cantidad_peliculas = len(peliculas_actor)
-    promedio_retorno = peliculas_actor['return'].mean()
-    retorno = sum(peliculas_actor['return'])
-    return {'actor':nombre_actor, 'cantidad_filmaciones':cantidad_peliculas, 'retorno_total':retorno, 'retorno_promedio':promedio_retorno}
+    cantidad_peliculas = len(actor_film)
+    promedio_retorno = actor_film['return'].mean()
+    retorno = sum(actor_film['return'])
+    return {'actor':nombre_del_actor, 'cantidad_filmaciones':cantidad_peliculas, 'retorno_total':retorno, 'retorno_promedio':promedio_retorno}
 
 ''' def get_director( nombre_director ): 
 Se ingresa el nombre de un director que se encuentre dentro de un dataset debiendo devolver el éxito del
 mismo medido a través del retorno. Además, deberá devolver el nombre de cada película con la fecha de 
 lanzamiento, retorno individual, costo y ganancia de la misma.'''
 
-@app.get('/get_director/{nombre_director}')
-def get_director(nombre_director: str):
-    # Filtrar las filas que contienen al director consultado
-    peliculas_director = data[data['name_director'] == nombre_director]
+@app.get('/get_director/{nombre_del_director}')
+def get_director(nombre_del_director: str):
     
-    # Verificar si el director existe en el dataset
+    # Filtrar las películas del director
+    peliculas_director = data[data['name_director'] == nombre_del_director]
+
+    # Verificar si se encontraron películas
     if peliculas_director.empty:
-        return {"message": f"No se encontraron películas para el director: {nombre_director}"}
-    
-    # Calcular la suma del retorno de inversión total
+        return {"message": f"No se encontraron películas para el director: {nombre_del_director}"}
+
+    # Calcular el retorno total (más eficiente usando .sum() en una sola línea)
     retorno_total = peliculas_director['return'].sum()
-    
-    # Crear una lista para almacenar la información de cada película
-    peliculas_info = []
-    
-    # Recorrer cada película del director
-    for _, pelicula in peliculas_director.iterrows(): # iterrows() se utiliza para iterar sobre un DataFrame de Pandas fila por fila, cada iteración devuelve una tupla que contiene el índice de la fila y la serie de datos correspondiente a esa fila.
-        titulo = pelicula['title']
-        año_lanzamiento = pelicula['release_year']
-        retorno_individual = pelicula['return']
-        costo = pelicula['budget']
-        ganancia = pelicula['revenue']
-        
-        # Crear un diccionario con la información de la película
-        pelicula_info = {
-            'titulo': titulo,
-            'año_lanzamiento': año_lanzamiento,
-            'retorno_pelicula': retorno_individual,
-            'budget_pelicula': costo,
-            'revenue_pelicula': ganancia
-        }
-        
-        # Agregar el diccionario a la lista de películas
-        peliculas_info.append(pelicula_info)
-    
-    # Crear el diccionario de respuesta con la suma del retorno total y la lista de películas
+
+    # Seleccionar columnas de interés y convertir el DataFrame resultante a diccionario
+    peliculas_info = peliculas_director[['title', 'release_year', 'return', 'budget', 'revenue']].to_dict(orient='records')
+
+    # Crear la respuesta
     respuesta = {
-        'director': nombre_director,
+        'director': nombre_del_director,
         'retorno_total': retorno_total,
         'peliculas': peliculas_info
     }
-    
+
     return respuesta
 
 @app.get('/recomendacion/{titulo}')
-def recomendacion(titulo):
+def recomendacion(titulo: str):
     # Verificar si el título está en el DataFrame
     if titulo not in data['title'].values:
-        return f"No se encontró ninguna película con el título '{titulo}'."
+        return {"message": f"No se encontró ninguna película con el título '{titulo}'."}
+
+    # Crear una matriz TF-IDF para los títulos de las películas
+    tfidf = TfidfVectorizer(stop_words="english")
+    tfidf_matrix = tfidf.fit_transform(data['title'])
+
+    # Calcular la matriz de similitud de coseno
+    cosine_similarities = linear_kernel(tfidf_matrix, tfidf_matrix)
 
     # Encontrar el índice de la película con el título dado
-    indices = pd.Series(data.index, index=data['title']).drop_duplicates()
-    idx = indices[titulo]
+    idx = data[data['title'] == titulo].index[0]
 
-    # Calcular las puntuaciones de similitud de todas las películas con la película dada
-    sim_scores = list(enumerate(cosine_similarities[idx]))
+    # Calcular las puntuaciones de similitud de todas las películas
+    sim_scores = cosine_similarities[idx]
 
-    # Ordenar las películas por puntaje de similitud en orden descendente
-    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
-
-    # Obtener los índices de las películas más similares (excluyendo la película dada)
-    sim_scores = sim_scores[1:6]  # Obtener las 5 películas más similares
-    movie_indices = [x[0] for x in sim_scores]
+    # Obtener los índices de las 5 películas más similares, excluyendo la original
+    sim_indices = sim_scores.argsort()[-6:-1][::-1]
 
     # Devolver los títulos de las películas más similares
-    respuesta_recomendacion = data['title'].iloc[movie_indices].tolist()
-    return {'lista recomendada': respuesta_recomendacion}
+    respuesta_recomendacion = data['title'].iloc[sim_indices].tolist()
+    
+    return {'lista_recomendada': respuesta_recomendacion}
 
 
 # Ejecutar la aplicación con Uvicorn
