@@ -68,44 +68,45 @@ Para realizar el deployment utilice Render para poder utilizar la API en una pag
 
 ### *Metodología*
 
-#### *Preparación y exploracion de Datos* 
-#### Se llevó a cabo un proceso de preparación de los datos, generando el archivo dataset_ML.csv que contiene 9000 registros para minimizar el uso de memoria RAM y ajustarse al límite de 512MB de la versión gratuita de Render. El conjunto de datos fue limpiado y preparado para su uso, implementando técnicas de análisis exploratorio para identificar relaciones entre variables y detectar posibles outliers o anomalías.
+####
+- *Preparación y exploracion de Datos* 
+Se llevó a cabo un proceso de preparación de los datos, generando el archivo dataset_ML.csv que contiene 9000 registros para minimizar el uso de memoria RAM y ajustarse al límite de 512MB de la versión gratuita de Render. El conjunto de datos fue limpiado y preparado para su uso, implementando técnicas de análisis exploratorio para identificar relaciones entre variables y detectar posibles outliers o anomalías.
 
-#### *Creación de la API*
-#### Para la creación de la API, se siguieron los siguientes pasos clave:
+- *Creación de la API*
+Para la creación de la API, se siguieron los siguientes pasos clave:
+ 1. Carga y Transformación de Datos:
+ - El archivo dataset_ML.csv se cargó en un DataFrame de pandas
+ - Se transformaron columnas relevantes, como 'name_genres', en un formato adecuado para el procesamiento,convirtiendo listas de géneros en cadenas de texto concatenadas.
 
-#### 1. Carga y Transformación de Datos:
-#### - El archivo dataset_ML.csv se cargó en un DataFrame de pandas.
-#### - Se transformaron columnas relevantes, como 'name_genres', en un formato adecuado para el procesamiento,convirtiendo listas de géneros en cadenas de texto concatenadas.
+ 2. Ingeniería de Características para Recomendaciones:
+ - Se implementó un sistema de recomendación utilizando un vectorizador TF-IDF para los títulos de las películas.
+ - Se utilizaron palabras clave personalizadas para mejorar el procesamiento del texto.
+ - Se aplicó la similitud del coseno para calcular puntajes de similitud entre títulos y generar recomendaciones.
 
-#### 2. Ingeniería de Características para Recomendaciones:
-#### - Se implementó un sistema de recomendación utilizando un vectorizador TF-IDF para los títulos de las películas.
-#### - Se utilizaron palabras clave personalizadas para mejorar el procesamiento del texto.
-#### - Se aplicó la similitud del coseno para calcular puntajes de similitud entre títulos y generar recomendaciones.
+ 3. Desarrollo de Endpoints:
+ Utilizando FastAPI, se crearon endpoints que ofrecen distintas funcionalidades:
+ - Cantidad de películas: Endpoints para consultar la cantidad de películas estrenadas por mes o día.
+ - Puntajes y votos: Recuperar el puntaje, cantidad de votos y promedio de votaciones para un título.
+ - Consultas de actores y directores: Proveer estadísticas como número total de películas y retorno promedio.
+ - Recomendaciones: Un endpoint que proporciona una lista de películas recomendadas basadas en similitud de títulos.
 
-#### 3. Desarrollo de Endpoints:
-#### Utilizando FastAPI, se crearon endpoints que ofrecen distintas funcionalidades:
-#### - Cantidad de películas: Endpoints para consultar la cantidad de películas estrenadas por mes o día.
-#### - Puntajes y votos: Recuperar el puntaje, cantidad de votos y promedio de votaciones para un título.
-#### - Consultas de actores y directores: Proveer estadísticas como número total de películas y retorno promedio.
-#### - Recomendaciones: Un endpoint que proporciona una lista de películas recomendadas basadas en similitud de títulos.
-
-#### 4. Manejo de Errores y Validación:
-#### - Se integró el manejo básico de errores para gestionar entradas inválidas, garantizando un funcionamiento fluido.
-#### - Validación de entradas, como nombres de meses y días en español, para asegurar respuestas precisas.
+ 4. Manejo de Errores y Validación:
+ - Se integró el manejo básico de errores para gestionar entradas inválidas, garantizando un funcionamiento fluido.
+ - Validación de entradas, como nombres de meses y días en español, para asegurar respuestas precisas.
 
 #### *Despliegue*
 #### La API se configuró para ejecutarse localmente con Uvicorn, permitiendo pruebas y desarrollo antes del despliegue en un entorno de producción, como la plataforma Render. Esta metodología estructurada garantiza una API eficiente y capaz de manejar diversas consultas relacionadas con películas, preservando la integridad de los datos y proporcionando respuestas claras ante errores.
 
 ### *Resultados y Conclusiones* 
 
-#### - El analisis de los resultados revelo que la mayoría de las películas se estrenan a principios y finales de semana, especialmente los viernes, alineándose con las estrategias de marketing para maximizar la audiencia durante el fin de semana.
-#### - En términos de meses, enero y los meses de otoño son épocas populares para los estrenos, mientras que los meses de verano muestran una disminución, posiblemente debido a las vacaciones y menor asistencia al cine.
-#### -Estos patrones pueden ser útiles para estudios de mercado y planificación estratégica de estrenos en la industria cinematográfica.
-#### -La API proporciona puntajes de popularidad y cantidades de votos para películas individuales. Esto puede llevar a conclusiones sobre qué tipos de películas tienden a ser más populares.
-#### - La API permite obtener el retorno total y promedio de un actor en función de las películas en las que ha participado. Los resultados podrían mostrar qué actores tienen mayor impacto en la taquilla, lo cual puede ser útil para estudios de mercado y estrategias de casting
-#### - La API proporciona estadísticas sobre directores, incluyendo el retorno total y detalles de cada película dirigida. Esto puede ayudar a identificar a los directores más exitosos en términos de retorno de inversión y determinar si ciertos directores tienden a trabajar en películas más rentables.
-#### -  La capacidad de la API para recomendar películas basadas en similitudes puede ser una herramienta valiosa para personalizar experiencias de usuario. Las recomendaciones efectivas pueden mejorar el compromiso del usuario en plataformas de contenido.
+#### 
+- El analisis de los resultados revelo que la mayoría de las películas se estrenan a principios y finales de semana, especialmente los viernes, alineándose con las estrategias de marketing para maximizar la audiencia durante el fin de semana.
+- En términos de meses, enero y los meses de otoño son épocas populares para los estrenos, mientras que los meses de verano muestran una disminución, posiblemente debido a las vacaciones y menor asistencia al cine.
+- Estos patrones pueden ser útiles para estudios de mercado y planificación estratégica de estrenos en la industria cinematográfica.
+- La API proporciona puntajes de popularidad y cantidades de votos para películas individuales. Esto puede llevar a conclusiones sobre qué tipos de películas tienden a ser más populares.
+- La API permite obtener el retorno total y promedio de un actor en función de las películas en las que ha participado. Los resultados podrían mostrar qué actores tienen mayor impacto en la taquilla, lo cual puede ser útil para estudios de mercado y estrategias de casting
+- La API proporciona estadísticas sobre directores, incluyendo el retorno total y detalles de cada película dirigida. Esto puede ayudar a identificar a los directores más exitosos en términos de retorno de inversión y determinar si ciertos directores tienden a trabajar en películas más rentables.
+-  La capacidad de la API para recomendar películas basadas en similitudes puede ser una herramienta valiosa para personalizar experiencias de usuario. Las recomendaciones efectivas pueden mejorar el compromiso del usuario en plataformas de contenido.
 
 
 ### *Video*
