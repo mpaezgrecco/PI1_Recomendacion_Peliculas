@@ -13,8 +13,9 @@
 5. Datos y Fuentes
 6. Metodología
 7. Resultados y Conclusiones
-8. Video 
-9. Autor 
+8. Pagina Web API
+9. Video 
+10. Autor 
 
 ### **Introduccion**
 #### Este proyecto presenta una aplicación basada en una API que ofrece información detallada sobre películas y funcionalidades, como consultas y recomendaciones. Desarrollada utilizando el framework FastAPI, la aplicación permite a los usuarios acceder a datos estadísticos, como la cantidad de filmaciones en un mes, puntajes y número de votaciones, así como explorar información relacionada con actores y directores. Incluye un sistema de recomendación basado en la similitud de puntuaciones, géneros y títulos. Se llevó a cabo un análisis exploratorio de los datos y la aplicación fue desplegada en Render. Al final, se incluye un video que demuestra su funcionamiento y las consultas implementadas.
@@ -108,6 +109,9 @@ Para la creación de la API, se siguieron los siguientes pasos clave:
 - La API proporciona estadísticas sobre directores, incluyendo el retorno total y detalles de cada película dirigida. Esto puede ayudar a identificar a los directores más exitosos en términos de retorno de inversión y determinar si ciertos directores tienden a trabajar en películas más rentables.
 -  La capacidad de la API para recomendar películas basadas en similitudes puede ser una herramienta valiosa para personalizar experiencias de usuario. Las recomendaciones efectivas pueden mejorar el compromiso del usuario en plataformas de contenido.
 
+### *Pagina Web API*
+
+#### https://pi1-recomendacion-peliculas.onrender.com/docs
 
 ### *Video*
 
