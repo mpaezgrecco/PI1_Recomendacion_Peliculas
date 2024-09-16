@@ -111,9 +111,11 @@ Para la creación de la API, se siguieron los siguientes pasos clave:
 
 ### *Pagina Web API*
 
-#### https://pi1-recomendacion-peliculas.onrender.com/docs
+#### https://pi1-recomendacion-peliculas.onrender.com/docs#/
 
 ### *Video*
+
+#### https://www.youtube.com/watch?v=9PZ-XpwXByo
 
 ####
 
