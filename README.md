@@ -115,7 +115,7 @@ Recibe el nombre de un actor, busca las películas en las que ha participado, y 
 Recibe el nombre de un director, busca sus películas en el DataFrame y calcula el retorno total. Para cada película, obtiene el título, fecha de lanzamiento, retorno individual, costo y ganancia, y lo almacena en una lista. Devuelve un diccionario con el retorno total y la información de cada película. Si el director no se encuentra, lo indica.
 7. Función: Recomendación de películas
 Recibe el título de una película y recomienda 5 películas similares. Verifica la existencia del título, calcula la similitud utilizando TF-IDF y la similitud del coseno, y devuelve una lista de las 5 películas más similares.
-
+### *Es importante tener en cuenta que se debe ingresar eltitulo de la pelicula con Mayusculas en cada palabra. Por ejemplo*: *T*he *I*nvincible
 
 ### *8.Resultados y Conclusiones* 
 
